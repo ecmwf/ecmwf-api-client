@@ -23,15 +23,16 @@ def read(path):
 
 
 setup(
-    name="ecmwf-api-client",
+    name='ecmwf-api-client',
     version=ecmwfapi.__version__,
     description=ecmwfapi.__doc__,
     long_description=read('README.md'),
-    author="ECMWF",
-    author_email="software.support@ecmwf.int",
+    author='European Centre for Medium-Range Weather Forecasts (ECMWF)',
+    author_email='software.support@ecmwf.int',
     license='Apache License Version 2.0',
-    url="https://github.com/ecmwf/ecmwf-api-client",
-
+    url='https://github.com/ecmwf/ecmwf-api-client',
+    packages=find_packages(),
+    zip_safe=True,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -42,7 +43,4 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Operating System :: OS Independent',
     ],
-
-    packages=find_packages(),
-    zip_safe=False,
 )
