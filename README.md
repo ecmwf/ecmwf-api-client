@@ -27,6 +27,7 @@ Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\.ecmwfapirc (Windows) shoul
     "email" : "john.smith@example.com"
 }
 ```
+* You can browse the ECMWF data catalogue at https://apps.ecmwf.int/mars-catalogue/
 
 Test
 ====
