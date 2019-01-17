@@ -5,7 +5,8 @@ Installation
 ============
 
 Install via pip with:
-$ pip install ecmwf-api-client
+
+> $ pip install ecmwf-api-client
 
 Configure
 =========
@@ -52,7 +53,6 @@ server.retrieve({
     'grid'    : '2/2',
     'target'  : 'data.grib'
 })
->>>
 ```
 
 License
