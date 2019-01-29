@@ -9,15 +9,23 @@
 # does it submit to any jurisdiction.
 #
 
+import io
+import os.path
 from setuptools import setup, find_packages
 
 import ecmwfapi
 
 
+def read(fname):
+    file_path = os.path.join(os.path.dirname(__file__), fname)
+    return io.open(file_path, encoding='utf-8').read()
+
 setup(
     name="ecmwf-api-client",
     version=ecmwfapi.__version__,
     description=ecmwfapi.__doc__,
+    long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     author="ECMWF",
     author_email="software.support@ecmwf.int",
     url="https://github.com/ecmwf/ecmwf-api-client",
