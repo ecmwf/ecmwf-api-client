@@ -11,31 +11,36 @@
 
 import io
 import os.path
+
 from setuptools import setup, find_packages
 
 import ecmwfapi
-
 
 def read(fname):
     file_path = os.path.join(os.path.dirname(__file__), fname)
     return io.open(file_path, encoding='utf-8').read()
 
 setup(
-    name="ecmwf-api-client",
+    name='ecmwf-api-client',
     version=ecmwfapi.__version__,
     description=ecmwfapi.__doc__,
     long_description=read('README.md'),
+    author='European Centre for Medium-Range Weather Forecasts (ECMWF)',
+    author_email='software.support@ecmwf.int',
+    license='Apache License Version 2.0',
+    url='https://github.com/ecmwf/ecmwf-api-client',
     long_description_content_type='text/markdown',
-    author="ECMWF",
-    author_email="software.support@ecmwf.int",
-    url="https://github.com/ecmwf/ecmwf-api-client",
-
-    # entry_points={
-    #     "console_scripts": [
-    #         "mars = XXX:main",
-    #     ],
-    # },
 
     packages=find_packages(),
-    zip_safe=False,
+    zip_safe=True,
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Apache Software License',
+        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Operating System :: OS Independent',
+    ],
 )
