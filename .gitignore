@@ -1,0 +1,4 @@
+build
+dist
+ecmwf_api_client.egg-info
+ecmwfapi/__pycache__

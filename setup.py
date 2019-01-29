@@ -10,17 +10,15 @@
 #
 
 import io
-import os
+import os.path
 
 from setuptools import setup, find_packages
 
 import ecmwfapi
 
-
-def read(path):
-    file_path = os.path.join(os.path.dirname(__file__), *path.split('/'))
+def read(fname):
+    file_path = os.path.join(os.path.dirname(__file__), fname)
     return io.open(file_path, encoding='utf-8').read()
-
 
 setup(
     name='ecmwf-api-client',
@@ -31,6 +29,8 @@ setup(
     author_email='software.support@ecmwf.int',
     license='Apache License Version 2.0',
     url='https://github.com/ecmwf/ecmwf-api-client',
+    long_description_content_type='text/markdown',
+
     packages=find_packages(),
     zip_safe=True,
     classifiers=[
