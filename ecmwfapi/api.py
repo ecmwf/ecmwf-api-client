@@ -7,28 +7,17 @@
 # granted to it by virtue of its status as an intergovernmental organisation nor
 # does it submit to any jurisdiction.
 
-# make the python3-like print behave in python 2
-from __future__ import print_function
-
 import os
 import sys
 import time
 import traceback
 from contextlib import closing
 
-# python 2 and 3 compatible urllib and httplib imports
-try:
-    from urllib.parse import urlparse
-    from urllib.parse import urljoin
-    from urllib.error import HTTPError, URLError
-    from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen, addinfourl
-    from http.client import BadStatusLine
-except ImportError:
-    from urlparse import urlparse
-    from urlparse import urljoin
-    from urllib2 import HTTPError, URLError
-    from urllib2 import HTTPRedirectHandler, Request, build_opener, urlopen, addinfourl
-    from httplib import BadStatusLine
+from http.client import BadStatusLine
+from urllib.error import HTTPError, URLError
+from urllib.parse import urljoin
+from urllib.parse import urlparse
+from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen, addinfourl
 
 try:
     import json
