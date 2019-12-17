@@ -10,6 +10,7 @@
 # make the python3-like print behave in python 2
 from __future__ import print_function
 
+import json
 import os
 import sys
 import time
@@ -29,11 +30,6 @@ except ImportError:
     from urllib2 import HTTPError, URLError
     from urllib2 import HTTPRedirectHandler, Request, build_opener, urlopen, addinfourl
     from httplib import BadStatusLine
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 try:
     import ssl
