@@ -37,10 +37,10 @@ You can test this small python script to retrieve TIGGE data:
 #!/usr/bin/env python
 from ecmwfapi import ECMWFDataServer
 
-# To run this example, you need an API key 
+# To run this example, you need an API key
 # available from https://api.ecmwf.int/v1/key/
 
-server = ECMWFDataServer()    
+server = ECMWFDataServer()
 server.retrieve({
     'origin'    : "ecmf",
     'levtype'   : "sfc",

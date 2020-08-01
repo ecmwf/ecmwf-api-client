@@ -10,6 +10,7 @@
 # make the python3-like print behave in python 2
 from __future__ import print_function
 
+import json
 import os
 import sys
 import time
@@ -31,11 +32,6 @@ except ImportError:
     from httplib import BadStatusLine
 
 try:
-    import json
-except ImportError:
-    import simplejson as json
-
-try:
     import ssl
 except ImportError:
     print("Python socket module was not compiled with SSL support. Aborting...")
@@ -43,7 +39,7 @@ except ImportError:
 
 
 ###############################################################################
-VERSION = '1.5.5'
+VERSION = '1.5.6'
 
 ###############################################################################
 
@@ -426,7 +422,7 @@ class APIRequest(object):
         else:
             mode = "wb"
 
-        self.log("Transfering %s into %s" %
+        self.log("Transferring %s into %s" %
                  (self._bytename(size - existing_size), path))
         self.log("From %s" % (url, ))
 
