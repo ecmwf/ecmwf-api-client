@@ -39,7 +39,7 @@ except ImportError:
 
 
 ###############################################################################
-VERSION = '1.5.4'
+VERSION = '1.5.5'
 
 ###############################################################################
 
@@ -59,7 +59,10 @@ def _get_apikey_from_environ():
 
 
 def _get_apikey_from_rcfile():
-    rc = os.path.normpath(os.path.expanduser("~/.ecmwfapirc"))
+    if "ECMWF_API_RC_FILE" in os.environ:
+        rc = os.path.normpath(os.path.expanduser(os.environ["ECMWF_API_RC_FILE"]))
+    else:
+        rc = os.path.normpath(os.path.expanduser("~/.ecmwfapirc"))
 
     try:
         with open(rc) as f:
