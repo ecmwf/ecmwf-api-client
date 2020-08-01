@@ -422,7 +422,7 @@ class APIRequest(object):
         else:
             mode = "wb"
 
-        self.log("Transfering %s into %s" %
+        self.log("Transferring %s into %s" %
                  (self._bytename(size - existing_size), path))
         self.log("From %s" % (url, ))
 
