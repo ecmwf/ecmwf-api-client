@@ -471,7 +471,6 @@ class APIRequest(object):
         )
         self.log("From %s" % (url,))
 
-
         bytes_transferred = 0
         with open(path, mode) as f:
             with closing(urlopen(req)) as http:
@@ -575,13 +574,7 @@ class ECMWFDataServer(object):
             self.log(m)
         else:
             t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(
-                "%s %s"
-                % (
-                    t,
-                    m,
-                )
-            )
+            print("%s %s" % (t, m,))
 
     def retrieve(self, req):
         target = req.get("target")
@@ -627,13 +620,7 @@ class ECMWFService(object):
             self.log(m)
         else:
             t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(
-                "%s %s"
-                % (
-                    t,
-                    m,
-                )
-            )
+            print("%s %s" % (t, m,))
 
     def execute(self, req, target):
         c = APIRequest(
