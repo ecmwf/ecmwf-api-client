@@ -28,6 +28,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - run: env
 
       - name: Tokens
         shell: python
