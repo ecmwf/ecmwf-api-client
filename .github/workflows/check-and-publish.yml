@@ -53,6 +53,7 @@ jobs:
           pytest -s --verbose
 
       - run: ls -l
+        shell: bash
 
   deploy:
 

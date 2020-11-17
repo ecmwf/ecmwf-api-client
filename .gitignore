@@ -5,3 +5,6 @@ ecmwfapi/__pycache__
 *.pyc
 *.swp
 ?.*
+*.grib
+*.nc
+?
