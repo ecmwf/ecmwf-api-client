@@ -49,6 +49,8 @@ jobs:
         run: |
           python setup.py develop
           pytest -s --verbose
+          
+      - run: ls -l
 
   deploy:
 
