@@ -233,10 +233,7 @@ class Ignore303(HTTPRedirectHandler):
         return None
 
     def http_error_303(self, req, fp, code, msg, headers):
-        infourl = addinfourl(fp, headers, req.get_full_url())
-        infourl.status = code
-        infourl.code = code
-        return infourl
+        return addinfourl(fp, headers, req.get_full_url(), code)
 
 
 class Connection(object):
@@ -412,7 +409,10 @@ class APIRequest(object):
         self.log("ECMWF API python library %s" % (VERSION,))
         self.log("ECMWF API at %s" % (self.url,))
         user = self.connection.call("%s/%s" % (self.url, "who-am-i"))
-        self.log("Welcome %s" % (user["full_name"] or "user '%s'" % user["uid"],))
+
+        if os.environ.get("GITHUB_ACTION") is None:
+            self.log("Welcome %s" % (user["full_name"] or "user '%s'" % user["uid"],))
+
         info = self.connection.call("%s/%s" % (self.url, "info")).get("info")
         self.show_info(info, user["uid"])
         info = self.connection.call("%s/%s/%s" % (self.url, self.service, "info")).get(
@@ -574,7 +574,13 @@ class ECMWFDataServer(object):
             self.log(m)
         else:
             t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print("%s %s" % (t, m,))
+            print(
+                "%s %s"
+                % (
+                    t,
+                    m,
+                )
+            )
 
     def retrieve(self, req):
         target = req.get("target")
@@ -620,7 +626,13 @@ class ECMWFService(object):
             self.log(m)
         else:
             t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print("%s %s" % (t, m,))
+            print(
+                "%s %s"
+                % (
+                    t,
+                    m,
+                )
+            )
 
     def execute(self, req, target):
         c = APIRequest(
