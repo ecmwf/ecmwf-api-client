@@ -21,6 +21,8 @@ jobs:
     name: Python ${{ matrix.python-version }} on ${{ matrix.platform }}
     runs-on: ${{ matrix.platform }}
 
+    timeout-minutes: 20
+
     steps:
       - uses: actions/checkout@v2
 
@@ -44,12 +46,12 @@ jobs:
                       print(os.environ[n], file=f)
 
       - run: pip install pytest
-      
+
       - name: Tests
         run: |
           python setup.py develop
           pytest -s --verbose
-          
+
       - run: ls -l
 
   deploy:
