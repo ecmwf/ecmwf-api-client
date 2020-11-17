@@ -1,0 +1,76 @@
+name: Check and publish
+
+on:
+  push:
+    branches: [ master ]
+
+  pull_request:
+    branches: [ master ]
+
+  release:
+    types: [created]
+
+jobs:
+  checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, ubuntu-latest, macos-latest]
+        python-version: ["3.6", "3.7", "3.8", "3.9"]
+
+    name: Python ${{ matrix.python-version }} on ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - run: env
+
+      - name: Tokens
+        shell: python
+        env:
+          ECMWFAPIRC: ${{ secrets.ECMWFAPIRC }}
+
+        run: |
+          import os
+          for n in ('ECMWFAPIRC',):
+              m = os.path.expanduser("~/." + n.lower())
+              if os.environ[n]:
+                  with open(m, "w") as f:
+                      print(os.environ[n], file=f)
+
+      - name: Tests
+        run: |
+          python setup.py develop
+          pytest
+
+  deploy:
+
+    if: ${{ github.event_name == 'release' }}
+
+    name: Upload to Pypi
+    needs: checks
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        python setup.py sdist
+        twine upload dist/*
