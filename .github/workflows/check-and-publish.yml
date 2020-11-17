@@ -43,10 +43,12 @@ jobs:
                   with open(m, "w") as f:
                       print(os.environ[n], file=f)
 
+      - run: pip install pytest
+      
       - name: Tests
         run: |
           python setup.py develop
-          pytest
+          pytest -s --verbose
 
   deploy:
 
