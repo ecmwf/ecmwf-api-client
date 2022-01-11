@@ -45,11 +45,7 @@ except ImportError:
     sys.exit(1)
 
 
-###############################################################################
-
 VERSION = "1.6.1"
-
-###############################################################################
 
 
 class APIKeyFetchError(Exception):
@@ -116,9 +112,6 @@ def get_apikey_values():
             )
 
     return key_values
-
-
-###############################################################################
 
 
 class RetryError(Exception):
@@ -252,7 +245,6 @@ class Connection(object):
 
     @robust
     def call(self, url, payload=None, method="GET"):
-
         # Ensure full url
         url = urljoin(self.url, url)
 
@@ -490,7 +482,6 @@ class APIRequest(object):
         return existing_size + bytes_transferred
 
     def execute(self, request, target=None):
-
         status = None
 
         self.connection.submit("%s/%s/requests" % (self.url, self.service), request)
@@ -555,9 +546,6 @@ class APIRequest(object):
             self.log("")
 
 
-###############################################################################
-
-
 class ECMWFDataServer(object):
     def __init__(self, url=None, key=None, email=None, verbose=False, log=None):
         if url is None or key is None or email is None:
@@ -594,9 +582,6 @@ class ECMWFDataServer(object):
             verbose=self.verbose,
         )
         c.execute(req, target)
-
-
-###############################################################################
 
 
 class ECMWFService(object):
@@ -646,5 +631,3 @@ class ECMWFService(object):
         )
         c.execute(req, target)
         self.trace("Done.")
-
-    ###############################################################################
