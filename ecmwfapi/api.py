@@ -398,19 +398,22 @@ class APIRequest(object):
         self.quiet = quiet
         self.verbose = verbose
         self._empty_line = False
+
         self.log("ECMWF API python library %s" % (VERSION,))
         self.log("ECMWF API at %s" % (self.url,))
+
         user = self.connection.call("%s/%s" % (self.url, "who-am-i"))
 
         if os.environ.get("GITHUB_ACTION") is None:
             self.log("Welcome %s" % (user["full_name"] or "user '%s'" % user["uid"],))
 
-        info = self.connection.call("%s/%s" % (self.url, "info")).get("info")
-        self.show_info(info, user["uid"])
-        info = self.connection.call("%s/%s/%s" % (self.url, self.service, "info")).get(
-            "info"
-        )
-        self.show_info(info, user["uid"])
+        general_info = self.connection.call("%s/%s" % (self.url, "info")).get("info")
+        self.show_info(general_info, user["uid"])
+
+        service_specific_info = self.connection.call(
+            "%s/%s/%s" % (self.url, self.service, "info")
+        ).get("info")
+        self.show_info(service_specific_info, user["uid"])
 
         if news:
             try:
