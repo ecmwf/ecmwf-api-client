@@ -399,10 +399,9 @@ class APIRequest(object):
         self.url = url
         self.service = service
         self.connection = Connection(url, email, key, quiet=quiet, verbose=verbose)
-        self._log = log
+        self.log = log
         self.quiet = quiet
         self.verbose = verbose
-        self._empty_line = False
 
         self.log("ECMWF API python library %s" % (VERSION,))
         self.log("ECMWF API at %s" % (self.url,))
@@ -429,17 +428,6 @@ class APIRequest(object):
                     self.log(n)
             except:
                 pass
-
-    def log(self, m):
-        if m == "":
-            if self._empty_line:
-                return
-            self._log(m)
-            self._empty_line = True
-            return
-
-        self._empty_line = False
-        self._log(m)
 
     def _bytename(self, size):
         prefix = {"": "K", "K": "M", "M": "G", "G": "T", "T": "P", "P": "E"}
