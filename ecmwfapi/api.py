@@ -192,12 +192,11 @@ class Ignore303(HTTPRedirectHandler):
             if code == 301:
                 global SAY
                 if SAY:
-                    o = req.get_full_url()
-                    n = newurl
+                    oldurl = req.get_full_url()
                     print()
                     print("*** ECMWF API has moved")
-                    print("***   OLD: %s" % get_api_url(o))
-                    print("***   NEW: %s" % get_api_url(n))
+                    print("***   OLD: %s" % get_api_url(oldurl))
+                    print("***   NEW: %s" % get_api_url(newurl))
                     print("*** Please update your ~/.ecmwfapirc file")
                     print()
                     SAY = False
