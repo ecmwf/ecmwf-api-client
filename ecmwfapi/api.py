@@ -560,9 +560,9 @@ class ECMWFDataServer(object):
         c = APIRequest(
             self.url,
             "datasets/%s" % (dataset,),
-            self.email,
-            self.key,
-            self.log,
+            email=self.email,
+            key=self.key,
+            log=self.log,
             verbose=self.verbose,
         )
         c.execute(req, target)
@@ -594,9 +594,9 @@ class ECMWFService(object):
         c = APIRequest(
             self.url,
             "services/%s" % (self.service,),
-            self.email,
-            self.key,
-            self.log,
+            email=self.email,
+            key=self.key,
+            log=self.log,
             verbose=self.verbose,
             quiet=self.quiet,
         )
