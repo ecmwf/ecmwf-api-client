@@ -41,8 +41,7 @@ except ImportError:
 try:
     import ssl
 except ImportError:
-    print("Python socket module was not compiled with SSL support. Aborting...")
-    sys.exit(1)
+    sys.exit("Python socket module was not compiled with SSL support. Aborting...")
 
 
 VERSION = "1.6.1"
