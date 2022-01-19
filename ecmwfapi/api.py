@@ -591,4 +591,4 @@ class ECMWFService(object):
             quiet=self.quiet,
         )
         c.execute(req, target)
-        self.log("Done.")
+        self.log("Done")
