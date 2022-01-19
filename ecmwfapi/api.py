@@ -260,8 +260,7 @@ class Connection(object):
         url = urljoin(self.url, url)
 
         if self.verbose:
-            self.log('Method %s' % method)
-            self.log('URL %s' % url)
+            self.log("Calling method %s on %s" % (method, url))
 
         headers = {
             "Accept": "application/json",
@@ -308,10 +307,10 @@ class Connection(object):
             self.location = urljoin(url, res.headers.get("Location", self.location))
 
         if self.verbose:
-            self.log("Code %s" % code)
-            self.log("Content-Type %s" % res.headers.get("Content-Type"))
-            self.log("Content-Length %s" % res.headers.get("Content-Length"))
-            self.log("Location %s" % res.headers.get("Location"))
+            self.log("Response code: %s" % code)
+            self.log("Response Content-Type: %s" % res.headers.get("Content-Type"))
+            self.log("Response Content-Length: %s" % res.headers.get("Content-Length"))
+            self.log("Response Location: %s" % res.headers.get("Location"))
 
         body = res.read().decode("utf-8")
         res.close()
@@ -327,7 +326,7 @@ class Connection(object):
                 error = True
 
         if self.verbose:
-            self.log(json.dumps(self.last, indent=4))
+            self.log("Response content: %s" % json.dumps(self.last, indent=4))
 
         self.status = self.last.get("status", self.status)
 
