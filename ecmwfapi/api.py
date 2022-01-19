@@ -141,35 +141,35 @@ def robust(func):
                 return func(self, *args, **kwargs)
             except HTTPError as e:
                 if self.verbose:
-                    print("WARNING: HTTPError received %s" % (e))
+                    self.log("WARNING: HTTPError received %s" % e)
                 if e.code < 500 or e.code in (501,):  # 501: not implemented
                     raise
                 last_error = e
             except BadStatusLine as e:
                 if self.verbose:
-                    print("WARNING: BadStatusLine received %s" % (e))
+                    self.log("WARNING: BadStatusLine received %s" % e)
                 last_error = e
             except URLError as e:
                 if self.verbose:
-                    print("WARNING: URLError received %s %s" % (e.errno, e))
+                    self.log("WARNING: URLError received %s %s" % (e.errno, e))
                 last_error = e
             except APIException:
                 raise
             except RetryError as e:
                 if self.verbose:
-                    print("WARNING: HTTP received %s" % (e.code))
-                    print(e.text)
+                    self.log("WARNING: HTTP received %s" % e.code)
+                    self.log(e.text)
                 last_error = e
             except:
                 if self.verbose:
-                    print("Unexpected error:", sys.exc_info()[0])
-                    print(traceback.format_exc())
+                    self.log("Unexpected error: %s" % sys.exc_info()[0])
+                    self.log(traceback.format_exc())
                 raise
-            print("Error contacting the WebAPI, retrying in %d seconds ..." % delay)
+            self.log("Error contacting the WebAPI, retrying in %d seconds ..." % delay)
             time.sleep(delay)
             tries -= 1
         # if all retries have been exhausted, raise the last exception caught
-        print("Could not contact the WebAPI after %d tries, failing !" % max_tries)
+        self.log("Could not contact the WebAPI after %d tries, failing !" % max_tries)
         raise last_error
 
     return wrapped
