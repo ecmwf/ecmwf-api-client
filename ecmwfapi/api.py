@@ -228,8 +228,19 @@ class Ignore303(HTTPRedirectHandler):
         return addinfourl(fp, headers, req.get_full_url(), code)
 
 
+def no_log(msg):
+    pass
+
+
+def print_with_timestamp(msg):
+    t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print("%s %s" % (t, msg))
+
+
 class Connection(object):
-    def __init__(self, url, email=None, key=None, verbose=False, quiet=False):
+    def __init__(
+        self, url, email=None, key=None, verbose=False, quiet=False, log=no_log
+    ):
         self.url = url
         self.email = email
         self.key = key
@@ -240,6 +251,7 @@ class Connection(object):
         self.offset = 0
         self.verbose = verbose
         self.quiet = quiet
+        self.log = log
         self.status = None
 
     @robust
@@ -248,7 +260,8 @@ class Connection(object):
         url = urljoin(self.url, url)
 
         if self.verbose:
-            print(method, url)
+            self.log('Method %s' % method)
+            self.log('URL %s' % url)
 
         headers = {
             "Accept": "application/json",
@@ -280,7 +293,7 @@ class Connection(object):
                     raise
         except HTTPError as e:
             if self.verbose:
-                print(e)
+                self.log(e)
             error = True
             res = e
             # 429: Too many requests
@@ -295,10 +308,10 @@ class Connection(object):
             self.location = urljoin(url, res.headers.get("Location", self.location))
 
         if self.verbose:
-            print("Code", code)
-            print("Content-Type", res.headers.get("Content-Type"))
-            print("Content-Length", res.headers.get("Content-Length"))
-            print("Location", res.headers.get("Location"))
+            self.log("Code %s" % code)
+            self.log("Content-Type %s" % res.headers.get("Content-Type"))
+            self.log("Content-Length %s" % res.headers.get("Content-Length"))
+            self.log("Location %s" % res.headers.get("Location"))
 
         body = res.read().decode("utf-8")
         res.close()
@@ -314,17 +327,17 @@ class Connection(object):
                 error = True
 
         if self.verbose:
-            print(json.dumps(self.last, indent=4))
+            self.log(json.dumps(self.last, indent=4))
 
         self.status = self.last.get("status", self.status)
 
         if self.verbose:
-            print("Status", self.status)
+            self.log("Status %s" % self.status)
 
         if "messages" in self.last:
             for n in self.last["messages"]:
                 if not self.quiet:
-                    print(n)
+                    self.log(n)
                 self.offset += 1
 
         if code == 200 and self.status == "complete":
@@ -356,7 +369,7 @@ class Connection(object):
 
     def wait(self):
         if self.verbose:
-            print("Sleeping %s second(s)" % (self.retry))
+            self.log("Sleeping %s second(s)" % (self.retry))
         time.sleep(self.retry)
         self.call(self.location, None, "GET")
 
@@ -374,15 +387,6 @@ class Connection(object):
             pass
 
 
-def no_log(msg):
-    pass
-
-
-def print_with_timestamp(msg):
-    t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print("%s %s" % (t, msg))
-
-
 class APIRequest(object):
     def __init__(
         self,
@@ -397,10 +401,13 @@ class APIRequest(object):
     ):
         self.url = url
         self.service = service
-        self.connection = Connection(url, email, key, quiet=quiet, verbose=verbose)
         self.log = log
         self.quiet = quiet
         self.verbose = verbose
+
+        self.connection = Connection(
+            url, email=email, key=key, quiet=quiet, verbose=verbose, log=log
+        )
 
         self.log("ECMWF API python library %s" % (VERSION,))
         self.log("ECMWF API at %s" % (self.url,))
