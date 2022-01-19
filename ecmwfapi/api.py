@@ -181,25 +181,10 @@ def get_api_url(url):
     )
 
 
-SAY = True
-
-
 class Ignore303(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         if code in [301, 302]:
             # We want the posts to work even if we are redirected
-            if code == 301:
-                global SAY
-                if SAY:
-                    oldurl = req.get_full_url()
-                    print()
-                    print("*** ECMWF API has moved")
-                    print("***   OLD: %s" % get_api_url(oldurl))
-                    print("***   NEW: %s" % get_api_url(newurl))
-                    print("*** Please update your ~/.ecmwfapirc file")
-                    print()
-                    SAY = False
-
             try:
                 # Python < 3.4
                 data = req.get_data()
