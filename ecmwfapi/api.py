@@ -182,6 +182,12 @@ def get_api_url(url):
 
 
 class Ignore303(HTTPRedirectHandler):
+
+    """Handler to automatically follow redirects.
+
+    Mainly implement when the API moved from http to https.
+    """
+
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         if code in [301, 302]:
             # We want the posts to work even if we are redirected
