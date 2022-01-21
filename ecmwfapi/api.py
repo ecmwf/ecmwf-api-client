@@ -41,15 +41,10 @@ except ImportError:
 try:
     import ssl
 except ImportError:
-    print("Python socket module was not compiled with SSL support. Aborting...")
-    sys.exit(1)
+    sys.exit("Python socket module was not compiled with SSL support. Aborting...")
 
-
-###############################################################################
 
 VERSION = "1.6.1"
-
-###############################################################################
 
 
 class APIKeyFetchError(Exception):
@@ -118,9 +113,6 @@ def get_apikey_values():
     return key_values
 
 
-###############################################################################
-
-
 class RetryError(Exception):
     def __init__(self, code, text):
         self.code = code
@@ -148,35 +140,35 @@ def robust(func):
                 return func(self, *args, **kwargs)
             except HTTPError as e:
                 if self.verbose:
-                    print("WARNING: HTTPError received %s" % (e))
+                    self.log("WARNING: HTTPError received %s" % e)
                 if e.code < 500 or e.code in (501,):  # 501: not implemented
                     raise
                 last_error = e
             except BadStatusLine as e:
                 if self.verbose:
-                    print("WARNING: BadStatusLine received %s" % (e))
+                    self.log("WARNING: BadStatusLine received %s" % e)
                 last_error = e
             except URLError as e:
                 if self.verbose:
-                    print("WARNING: URLError received %s %s" % (e.errno, e))
+                    self.log("WARNING: URLError received %s %s" % (e.errno, e))
                 last_error = e
             except APIException:
                 raise
             except RetryError as e:
                 if self.verbose:
-                    print("WARNING: HTTP received %s" % (e.code))
-                    print(e.text)
+                    self.log("WARNING: HTTP received %s" % e.code)
+                    self.log(e.text)
                 last_error = e
             except:
                 if self.verbose:
-                    print("Unexpected error:", sys.exc_info()[0])
-                    print(traceback.format_exc())
+                    self.log("Unexpected error: %s" % sys.exc_info()[0])
+                    self.log(traceback.format_exc())
                 raise
-            print("Error contacting the WebAPI, retrying in %d seconds ..." % delay)
+            self.log("Error contacting the WebAPI, retrying in %d seconds ..." % delay)
             time.sleep(delay)
             tries -= 1
         # if all retries have been exhausted, raise the last exception caught
-        print("Could not contact the WebAPI after %d tries, failing !" % max_tries)
+        self.log("Could not contact the WebAPI after %d tries, failing !" % max_tries)
         raise last_error
 
     return wrapped
@@ -189,26 +181,16 @@ def get_api_url(url):
     )
 
 
-SAY = True
-
-
 class Ignore303(HTTPRedirectHandler):
+
+    """Handler to automatically follow redirects.
+
+    Mainly implement when the API moved from http to https.
+    """
+
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         if code in [301, 302]:
             # We want the posts to work even if we are redirected
-            if code == 301:
-                global SAY
-                if SAY:
-                    o = req.get_full_url()
-                    n = newurl
-                    print()
-                    print("*** ECMWF API has moved")
-                    print("***   OLD: %s" % get_api_url(o))
-                    print("***   NEW: %s" % get_api_url(n))
-                    print("*** Please update your ~/.ecmwfapirc file")
-                    print()
-                    SAY = False
-
             try:
                 # Python < 3.4
                 data = req.get_data()
@@ -236,8 +218,19 @@ class Ignore303(HTTPRedirectHandler):
         return addinfourl(fp, headers, req.get_full_url(), code)
 
 
+def no_log(msg):
+    pass
+
+
+def print_with_timestamp(msg):
+    t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    print("%s %s" % (t, msg))
+
+
 class Connection(object):
-    def __init__(self, url, email=None, key=None, verbose=False, quiet=False):
+    def __init__(
+        self, url, email=None, key=None, verbose=False, quiet=False, log=no_log
+    ):
         self.url = url
         self.email = email
         self.key = key
@@ -248,16 +241,16 @@ class Connection(object):
         self.offset = 0
         self.verbose = verbose
         self.quiet = quiet
+        self.log = log
         self.status = None
 
     @robust
     def call(self, url, payload=None, method="GET"):
-
         # Ensure full url
         url = urljoin(self.url, url)
 
         if self.verbose:
-            print(method, url)
+            self.log("Calling method %s on %s" % (method, url))
 
         headers = {
             "Accept": "application/json",
@@ -289,7 +282,7 @@ class Connection(object):
                     raise
         except HTTPError as e:
             if self.verbose:
-                print(e)
+                self.log(e)
             error = True
             res = e
             # 429: Too many requests
@@ -304,10 +297,10 @@ class Connection(object):
             self.location = urljoin(url, res.headers.get("Location", self.location))
 
         if self.verbose:
-            print("Code", code)
-            print("Content-Type", res.headers.get("Content-Type"))
-            print("Content-Length", res.headers.get("Content-Length"))
-            print("Location", res.headers.get("Location"))
+            self.log("Response code: %s" % code)
+            self.log("Response Content-Type: %s" % res.headers.get("Content-Type"))
+            self.log("Response Content-Length: %s" % res.headers.get("Content-Length"))
+            self.log("Response Location: %s" % res.headers.get("Location"))
 
         body = res.read().decode("utf-8")
         res.close()
@@ -323,17 +316,17 @@ class Connection(object):
                 error = True
 
         if self.verbose:
-            print(json.dumps(self.last, indent=4))
+            self.log("Response content: %s" % json.dumps(self.last, indent=4))
 
         self.status = self.last.get("status", self.status)
 
         if self.verbose:
-            print("Status", self.status)
+            self.log("Status %s" % self.status)
 
         if "messages" in self.last:
             for n in self.last["messages"]:
                 if not self.quiet:
-                    print(n)
+                    self.log(n)
                 self.offset += 1
 
         if code == 200 and self.status == "complete":
@@ -365,7 +358,7 @@ class Connection(object):
 
     def wait(self):
         if self.verbose:
-            print("Sleeping %s second(s)" % (self.retry))
+            self.log("Sleeping %s second(s)" % (self.retry))
         time.sleep(self.retry)
         self.call(self.location, None, "GET")
 
@@ -383,10 +376,6 @@ class Connection(object):
             pass
 
 
-def no_log(msg):
-    pass
-
-
 class APIRequest(object):
     def __init__(
         self,
@@ -401,24 +390,29 @@ class APIRequest(object):
     ):
         self.url = url
         self.service = service
-        self.connection = Connection(url, email, key, quiet=quiet, verbose=verbose)
-        self._log = log
+        self.log = log
         self.quiet = quiet
         self.verbose = verbose
-        self._empty_line = False
+
+        self.connection = Connection(
+            url, email=email, key=key, quiet=quiet, verbose=verbose, log=log
+        )
+
         self.log("ECMWF API python library %s" % (VERSION,))
         self.log("ECMWF API at %s" % (self.url,))
+
         user = self.connection.call("%s/%s" % (self.url, "who-am-i"))
 
         if os.environ.get("GITHUB_ACTION") is None:
             self.log("Welcome %s" % (user["full_name"] or "user '%s'" % user["uid"],))
 
-        info = self.connection.call("%s/%s" % (self.url, "info")).get("info")
-        self.show_info(info, user["uid"])
-        info = self.connection.call("%s/%s/%s" % (self.url, self.service, "info")).get(
-            "info"
-        )
-        self.show_info(info, user["uid"])
+        general_info = self.connection.call("%s/%s" % (self.url, "info")).get("info")
+        self.show_info(general_info, user["uid"])
+
+        service_specific_info = self.connection.call(
+            "%s/%s/%s" % (self.url, self.service, "info")
+        ).get("info")
+        self.show_info(service_specific_info, user["uid"])
 
         if news:
             try:
@@ -429,17 +423,6 @@ class APIRequest(object):
                     self.log(n)
             except:
                 pass
-
-    def log(self, m):
-        if m == "":
-            if self._empty_line:
-                return
-            self._log(m)
-            self._empty_line = True
-            return
-
-        self._empty_line = False
-        self._log(m)
 
     def _bytename(self, size):
         prefix = {"": "K", "K": "M", "M": "G", "G": "T", "T": "P", "P": "E"}
@@ -490,7 +473,6 @@ class APIRequest(object):
         return existing_size + bytes_transferred
 
     def execute(self, request, target=None):
-
         status = None
 
         self.connection.submit("%s/%s/requests" % (self.url, self.service), request)
@@ -555,11 +537,10 @@ class APIRequest(object):
             self.log("")
 
 
-###############################################################################
-
-
 class ECMWFDataServer(object):
-    def __init__(self, url=None, key=None, email=None, verbose=False, log=None):
+    def __init__(
+        self, url=None, key=None, email=None, verbose=False, log=print_with_timestamp
+    ):
         if url is None or key is None or email is None:
             key, url, email = get_apikey_values()
 
@@ -569,34 +550,18 @@ class ECMWFDataServer(object):
         self.verbose = verbose
         self.log = log
 
-    def trace(self, m):
-        if self.log:
-            self.log(m)
-        else:
-            t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(
-                "%s %s"
-                % (
-                    t,
-                    m,
-                )
-            )
-
     def retrieve(self, req):
         target = req.get("target")
         dataset = req.get("dataset")
         c = APIRequest(
             self.url,
             "datasets/%s" % (dataset,),
-            self.email,
-            self.key,
-            self.trace,
+            email=self.email,
+            key=self.key,
+            log=self.log,
             verbose=self.verbose,
         )
         c.execute(req, target)
-
-
-###############################################################################
 
 
 class ECMWFService(object):
@@ -607,7 +572,7 @@ class ECMWFService(object):
         key=None,
         email=None,
         verbose=False,
-        log=None,
+        log=print_with_timestamp,
         quiet=False,
     ):
         if url is None or key is None or email is None:
@@ -621,30 +586,15 @@ class ECMWFService(object):
         self.quiet = quiet
         self.log = log
 
-    def trace(self, m):
-        if self.log:
-            self.log(m)
-        else:
-            t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(
-                "%s %s"
-                % (
-                    t,
-                    m,
-                )
-            )
-
     def execute(self, req, target):
         c = APIRequest(
             self.url,
             "services/%s" % (self.service,),
-            self.email,
-            self.key,
-            self.trace,
+            email=self.email,
+            key=self.key,
+            log=self.log,
             verbose=self.verbose,
             quiet=self.quiet,
         )
         c.execute(req, target)
-        self.trace("Done.")
-
-    ###############################################################################
+        self.log("Done")
