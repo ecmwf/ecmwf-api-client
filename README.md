@@ -29,8 +29,8 @@ Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\.ecmwfapirc (Windows) shoul
 ```
 * You can browse the ECMWF data catalogue at https://apps.ecmwf.int/mars-catalogue/
 
-Test
-====
+Example
+=======
 
 You can test this small python script to retrieve TIGGE data:
 ```
@@ -57,6 +57,25 @@ server.retrieve({
     'class'     : "ti",
     'target'    : "tigge_2014-11-01_0012.grib"
 })
+```
+
+Logging
+=======
+
+Logging messages by default are emitted to `stdout` using Python's `print` statement.
+
+To change that behaviour, one can define their own logging function and use it like so:
+
+```
+import logging
+from ecmwfapi import ECMWFDataServer
+
+logging.basicConfig(level=logging.INFO)
+
+def my_logging_function(msg):
+    logging.info(msg)
+
+server = ECMWFDataServer(log=my_logging_function)
 ```
 
 License
