@@ -87,16 +87,12 @@ def _get_apikey_from_rcfile():
 
 
 def get_apikey_values():
-    """Get the API key from the environment or the '.ecmwfapirc' file.
-
-    The environment is looked at first.
+    """Get the API key from either the environment or the '.ecmwfapirc' file,
+    in this order. If the API key is not available or invalid, use the API key
+    for anonymous access as a fallback.
 
     Returns:
-        Tuple with the key, url, and email forming our API key.
-
-    Raises:
-        APIKeyFetchError: When unable to get the API key from either the
-            environment or the ecmwfapirc file.
+        Tuple with the API key token, url, and email.
     """
     try:
         key_values = _get_apikey_from_environ()
