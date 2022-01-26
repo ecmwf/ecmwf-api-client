@@ -53,10 +53,11 @@ class APIKeyFetchError(Exception):
 
 def _get_apikey_from_environ():
     try:
-        key = os.environ["ECMWF_API_KEY"]
-        url = os.environ["ECMWF_API_URL"]
-        email = os.environ["ECMWF_API_EMAIL"]
-        return key, url, email
+        return (
+            os.environ["ECMWF_API_KEY"],
+            os.environ["ECMWF_API_URL"],
+            os.environ["ECMWF_API_EMAIL"],
+        )
     except KeyError:
         raise APIKeyFetchError("ERROR: Could not get the API key from the environment")
 
@@ -78,10 +79,7 @@ def _get_apikey_from_rcfile():
         raise APIKeyFetchError(str(e))
 
     try:
-        key = config["key"]
-        url = config["url"]
-        email = config["email"]
-        return key, url, email
+        return (config["key"], config["url"], config["email"])
     except:
         raise APIKeyFetchError("ERROR: Missing or malformed API key in '%s'" % rc)
 
@@ -100,11 +98,7 @@ def get_apikey_values():
         try:
             key_values = _get_apikey_from_rcfile()
         except APIKeyFetchError:
-            return (
-                "anonymous",
-                "https://api.ecmwf.int/v1",
-                "anonymous@ecmwf.int",
-            )
+            return ("anonymous", "https://api.ecmwf.int/v1", "anonymous@ecmwf.int")
 
     return key_values
 
