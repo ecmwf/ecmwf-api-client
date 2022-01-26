@@ -101,9 +101,9 @@ def get_apikey_values():
             key_values = _get_apikey_from_rcfile()
         except APIKeyFetchError:
             return (
-                os.environ.get("ECMWF_API_KEY", "anonymous"),
-                os.environ.get("ECMWF_API_URL", "https://api.ecmwf.int/v1"),
-                os.environ.get("ECMWF_API_EMAIL", "anonymous@ecmwf.int"),
+                "anonymous",
+                "https://api.ecmwf.int/v1",
+                "anonymous@ecmwf.int",
             )
 
     return key_values
