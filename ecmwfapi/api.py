@@ -59,18 +59,18 @@ class APIKeyFetchError(Exception):
 
 
 def get_apikey_values_from_environ():
-    api_key_values = (
+    apikey_values = (
         os.getenv("ECMWF_API_KEY"),
         os.getenv("ECMWF_API_URL"),
         os.getenv("ECMWF_API_EMAIL"),
     )
 
-    if not any(api_key_values):
+    if not any(apikey_values):
         raise APIKeyNotFoundError()
-    elif not all(api_key_values):
+    elif not all(apikey_values):
         raise APIKeyFetchError("ERROR: Incomplete API key found in the environment")
     else:
-        return api_key_values
+        return apikey_values
 
 
 def get_apikey_values_from_rcfile(rcfile_path):
@@ -78,7 +78,7 @@ def get_apikey_values_from_rcfile(rcfile_path):
 
     try:
         with open(rcfile_path) as f:
-            api_key = json.load(f)
+            apikey = json.load(f)
     except FileNotFoundError as e:
         raise APIKeyNotFoundError(str(e))
     except IOError as e:  # Failed reading from file
@@ -91,7 +91,7 @@ def get_apikey_values_from_rcfile(rcfile_path):
         raise APIKeyFetchError(str(e))
     else:
         try:
-            return (api_key["key"], api_key["url"], api_key["email"])
+            return (apikey["key"], apikey["url"], apikey["email"])
         except:
             raise APIKeyFetchError(
                 "ERROR: Missing or malformed API key in '%s'" % rcfile_path
