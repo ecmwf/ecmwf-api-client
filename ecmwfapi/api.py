@@ -63,17 +63,17 @@ def get_apikey_values_from_environ():
 
 
 def get_apikey_values_from_rcfile():
-    rc_file_path = os.environ.get("ECMWF_API_RC_FILE", "~/.ecmwfapirc")
-    absolute_rc_file_path = os.path.normpath(os.path.expanduser(rc_file_path))
+    rcfile_path = os.environ.get("ECMWF_API_RC_FILE", "~/.ecmwfapirc")
+    absolute_rcfile_path = os.path.normpath(os.path.expanduser(rcfile_path))
 
     try:
-        with open(absolute_rc_file_path) as f:
+        with open(absolute_rcfile_path) as f:
             api_key = json.load(f)
     except IOError as e:  # Failed reading from file
         raise APIKeyFetchError(str(e))
     except ValueError:  # JSON decoding failed
         raise APIKeyFetchError(
-            "ERROR: Missing or malformed API key in '%s'" % rc_file_path
+            "ERROR: Missing or malformed API key in '%s'" % rcfile_path
         )
     except Exception as e:  # Unexpected error
         raise APIKeyFetchError(str(e))
@@ -82,7 +82,7 @@ def get_apikey_values_from_rcfile():
             return (api_key["key"], api_key["url"], api_key["email"])
         except:
             raise APIKeyFetchError(
-                "ERROR: Missing or malformed API key in '%s'" % rc_file_path
+                "ERROR: Missing or malformed API key in '%s'" % rcfile_path
             )
 
 
