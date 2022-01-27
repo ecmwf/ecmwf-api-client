@@ -51,7 +51,7 @@ class APIKeyFetchError(Exception):
     pass
 
 
-def _get_apikey_from_environ():
+def get_apikey_values_from_environ():
     try:
         return (
             os.environ["ECMWF_API_KEY"],
@@ -62,7 +62,7 @@ def _get_apikey_from_environ():
         raise APIKeyFetchError("ERROR: Could not get the API key from the environment")
 
 
-def _get_apikey_from_rcfile():
+def get_apikey_values_from_rcfile():
     rc_file_path = os.environ.get("ECMWF_API_RC_FILE", "~/.ecmwfapirc")
     absolute_rc_file_path = os.path.normpath(os.path.expanduser(rc_file_path))
 
@@ -95,10 +95,10 @@ def get_apikey_values():
         Tuple with the API key token, url, and email.
     """
     try:
-        return _get_apikey_from_environ()
+        return get_apikey_values_from_environ()
     except APIKeyFetchError:
         try:
-            return _get_apikey_from_rcfile()
+            return get_apikey_values_from_rcfile()
         except APIKeyFetchError:
             return ("anonymous", "https://api.ecmwf.int/v1", "anonymous@ecmwf.int")
 
