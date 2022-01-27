@@ -95,14 +95,12 @@ def get_apikey_values():
         Tuple with the API key token, url, and email.
     """
     try:
-        key_values = _get_apikey_from_environ()
+        return _get_apikey_from_environ()
     except APIKeyFetchError:
         try:
-            key_values = _get_apikey_from_rcfile()
+            return _get_apikey_from_rcfile()
         except APIKeyFetchError:
             return ("anonymous", "https://api.ecmwf.int/v1", "anonymous@ecmwf.int")
-
-    return key_values
 
 
 class RetryError(Exception):
