@@ -47,6 +47,9 @@ except ImportError:
 VERSION = "1.6.2"
 
 
+DEFAULT_RCFILE_PATH = "~/.ecmwfapirc"
+
+
 class APIKeyNotFoundError(Exception):
     pass
 
@@ -111,7 +114,7 @@ def get_apikey_values():
             return get_apikey_values_from_rcfile(env_rcfile_path)
         else:
             try:
-                return get_apikey_values_from_rcfile("~/.ecmwfapirc")
+                return get_apikey_values_from_rcfile(DEFAULT_RCFILE_PATH)
             except APIKeyNotFoundError:
                 return ("anonymous", "https://api.ecmwf.int/v1", "anonymous@ecmwf.int")
 
