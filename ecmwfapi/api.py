@@ -47,28 +47,37 @@ except ImportError:
 VERSION = "1.6.2"
 
 
+class APIKeyNotFoundError(Exception):
+    pass
+
+
 class APIKeyFetchError(Exception):
     pass
 
 
 def get_apikey_values_from_environ():
+    api_key_values = (
+        os.getenv("ECMWF_API_KEY"),
+        os.getenv("ECMWF_API_URL"),
+        os.getenv("ECMWF_API_EMAIL"),
+    )
+
+    if not any(api_key_values):
+        raise APIKeyNotFoundError()
+    elif not all(api_key_values):
+        raise APIKeyFetchError("ERROR: Incomplete API key found in the environment")
+    else:
+        return api_key_values
+
+
+def get_apikey_values_from_rcfile(rcfile_path):
+    rcfile_path = os.path.normpath(os.path.expanduser(rcfile_path))
+
     try:
-        return (
-            os.environ["ECMWF_API_KEY"],
-            os.environ["ECMWF_API_URL"],
-            os.environ["ECMWF_API_EMAIL"],
-        )
-    except KeyError:
-        raise APIKeyFetchError("ERROR: Could not get the API key from the environment")
-
-
-def get_apikey_values_from_rcfile():
-    rcfile_path = os.environ.get("ECMWF_API_RC_FILE", "~/.ecmwfapirc")
-    absolute_rcfile_path = os.path.normpath(os.path.expanduser(rcfile_path))
-
-    try:
-        with open(absolute_rcfile_path) as f:
+        with open(rcfile_path) as f:
             api_key = json.load(f)
+    except FileNotFoundError as e:
+        raise APIKeyNotFoundError(str(e))
     except IOError as e:  # Failed reading from file
         raise APIKeyFetchError(str(e))
     except ValueError:  # JSON decoding failed
@@ -96,11 +105,15 @@ def get_apikey_values():
     """
     try:
         return get_apikey_values_from_environ()
-    except APIKeyFetchError:
-        try:
-            return get_apikey_values_from_rcfile()
-        except APIKeyFetchError:
-            return ("anonymous", "https://api.ecmwf.int/v1", "anonymous@ecmwf.int")
+    except APIKeyNotFoundError:
+        env_rcfile_path = os.getenv("ECMWF_API_RC_FILE")
+        if env_rcfile_path:
+            return get_apikey_values_from_rcfile(env_rcfile_path)
+        else:
+            try:
+                return get_apikey_values_from_rcfile("~/.ecmwfapirc")
+            except APIKeyNotFoundError:
+                return ("anonymous", "https://api.ecmwf.int/v1", "anonymous@ecmwf.int")
 
 
 class RetryError(Exception):
@@ -393,7 +406,7 @@ class APIRequest(object):
 
         user = self.connection.call("%s/%s" % (self.url, "who-am-i"))
 
-        if os.environ.get("GITHUB_ACTION") is None:
+        if os.getenv("GITHUB_ACTION") is None:
             self.log("Welcome %s" % (user["full_name"] or "user '%s'" % user["uid"],))
 
         general_info = self.connection.call("%s/%s" % (self.url, "info")).get("info")
