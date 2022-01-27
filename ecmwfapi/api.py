@@ -72,14 +72,18 @@ def _get_apikey_from_rcfile():
     except IOError as e:  # Failed reading from file
         raise APIKeyFetchError(str(e))
     except ValueError:  # JSON decoding failed
-        raise APIKeyFetchError("ERROR: Missing or malformed API key in '%s'" % rc_file_path)
+        raise APIKeyFetchError(
+            "ERROR: Missing or malformed API key in '%s'" % rc_file_path
+        )
     except Exception as e:  # Unexpected error
         raise APIKeyFetchError(str(e))
-
-    try:
-        return (api_key["key"], api_key["url"], api_key["email"])
-    except:
-        raise APIKeyFetchError("ERROR: Missing or malformed API key in '%s'" % rc_file_path)
+    else:
+        try:
+            return (api_key["key"], api_key["url"], api_key["email"])
+        except:
+            raise APIKeyFetchError(
+                "ERROR: Missing or malformed API key in '%s'" % rc_file_path
+            )
 
 
 def get_apikey_values():
