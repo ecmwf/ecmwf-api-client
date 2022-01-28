@@ -10,19 +10,19 @@ Install via pip with:
 
 ## Anonymous access (default, not recommended)
 
-Anonymous access is the default type of access with no configuration needed.
+Anonymous access is the default type of access, with no configuration needed.
 
 However, anonymous access is only available for a limited set of datasets, and comes with a much lower quality of service. For access to all the available datasets, and an improved quality of service, please use registered access (see below).
 
 ## Registered access (recommended)
 
-* Register with ECMWF at https://apps.ecmwf.int/registration/ and then follow the steps below.
-* Login at https://apps.ecmwf.int/auth/login/
-* Retrieve you API access key at https://api.ecmwf.int/v1/key/
+* Register with ECMWF at https://apps.ecmwf.int/registration/.
+* Login at https://apps.ecmwf.int/auth/login/.
+* Retrieve you API access key at https://api.ecmwf.int/v1/key/.
 
-   Note that the key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
+   Note that the API access key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key, log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
 
-* Copy the information in this page and paste it in the file $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows: usually in C:\\Users\\\<USERNAME\>\\.ecmwfapirc ; see how to create a file with a leading dot).
+* Copy and paste the information on this page into the file $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows: usually in C:\\Users\\\<USERNAME\>\\.ecmwfapirc).
 
    Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows) should look something like this:
    ```
@@ -32,8 +32,7 @@ However, anonymous access is only available for a limited set of datasets, and c
        "email" : "john.smith@example.com"
    }
    ```
-* You can browse the ECMWF data catalogue at https://apps.ecmwf.int/mars-catalogue/
-
+   
 # Example
 
 You can test this small python script to retrieve TIGGE data:
