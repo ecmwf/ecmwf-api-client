@@ -105,7 +105,7 @@ def get_apikey_values_from_rcfile(rcfile_path):
 
 def get_apikey_values():
     """Get the API key values in Python tuple format either directly from the
-    environment, or from a file.  If no API key is found, fall back to anonymous
+    environment, or from a file. If no API key is found, fall back to anonymous
     access.
 
     The complete workflow is the following:
