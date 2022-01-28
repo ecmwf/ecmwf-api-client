@@ -48,6 +48,11 @@ VERSION = "1.6.2"
 
 
 DEFAULT_RCFILE_PATH = "~/.ecmwfapirc"
+ANONYMOUS_APIKEY_VALUES = (
+    "anonymous",
+    "https://api.ecmwf.int/v1",
+    "anonymous@ecmwf.int",
+)
 
 
 class APIKeyNotFoundError(Exception):
@@ -116,7 +121,7 @@ def get_apikey_values():
             try:
                 return get_apikey_values_from_rcfile(DEFAULT_RCFILE_PATH)
             except APIKeyNotFoundError:
-                return ("anonymous", "https://api.ecmwf.int/v1", "anonymous@ecmwf.int")
+                return ANONYMOUS_APIKEY_VALUES
 
 
 class RetryError(Exception):
