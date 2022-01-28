@@ -37,7 +37,7 @@ However, anonymous access is only available for a limited set of datasets, and c
    
 # Example
 
-You can test this small python script to retrieve TIGGE data:
+You can test this small python script to retrieve TIGGE (https://apps.ecmwf.int/datasets/data/tigge) data. Note that access to TIGGE data requires registered access, and is subject to accepting a licence at https://apps.ecmwf.int/datasets/data/tigge/licence/.
 ```
 #!/usr/bin/env python
 from ecmwfapi import ECMWFDataServer
