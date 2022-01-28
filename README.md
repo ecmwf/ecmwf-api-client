@@ -22,7 +22,7 @@ However, anonymous access is only available for a limited set of datasets, and c
 
    Note that the API access key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key, log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
 
-* Copy and paste the information on this page into the file $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows: usually in C:\\Users\\\<USERNAME\>\\.ecmwfapirc).
+* Copy and paste the API access key into the file $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows: usually in C:\\Users\\\<USERNAME\>\\.ecmwfapirc).
 
    Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows) should look something like this:
    ```
@@ -32,6 +32,8 @@ However, anonymous access is only available for a limited set of datasets, and c
        "email" : "john.smith@example.com"
    }
    ```
+* Alternatively, one can use a file of their own liking, and point to it using environment variable `ECMWF_API_RC_FILE`. `ECMWF_API_RC_FILE` should be set to the full path of the given file. This method takes priority of the previous method of using a .ecmwfapirc file.
+* As yet another option, one can set the API access key values directly in the environment using variables `ECMWF_API_KEY` (key), `ECMWF_API_URL` (url), `ECMWF_API_EMAIL` (email). This method takes priority over the previous method of using environment variable `ECMWF_API_RC_FILE`.
    
 # Example
 
