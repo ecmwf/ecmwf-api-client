@@ -1,21 +1,26 @@
-ecmwf-api-client
-================
+# ecmwf-api-client
 
-Installation
-============
+# Installation
 
 Install via pip with:
 
 > $ pip install ecmwf-api-client
 
-Configure
-=========
+# Configure
 
-* If you don't have an ECMWF account, please self register at https://apps.ecmwf.int/registration/ and then go to the steps below.
-* Login https://apps.ecmwf.int/auth/login/
-* Retrieve you key at https://api.ecmwf.int/v1/key/
+## Anonymous access (default, not recommended)
 
-Note that the key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
+Anonymous access is the default type of access with no configuration needed.
+
+However, anonymous access is only available for a limited set of datasets, and comes with a much lower quality of service. For access to all the available datasets, and an improved quality of service, please use registered access (see below).
+
+## Registered access (recommended)
+
+* Register with ECMWF at https://apps.ecmwf.int/registration/ and then follow the steps below.
+* Login at https://apps.ecmwf.int/auth/login/
+* Retrieve you API access key at https://api.ecmwf.int/v1/key/
+
+Note that the API key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
 
 * Copy the information in this page and paste it in the file $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows: usually in C:\\Users\\\<USERNAME\>\\.ecmwfapirc ; see how to create a file with a leading dot).
 
@@ -29,8 +34,7 @@ Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows) shou
 ```
 * You can browse the ECMWF data catalogue at https://apps.ecmwf.int/mars-catalogue/
 
-Example
-=======
+# Example
 
 You can test this small python script to retrieve TIGGE data:
 ```
@@ -59,8 +63,7 @@ server.retrieve({
 })
 ```
 
-Logging
-=======
+# Logging
 
 Logging messages by default are emitted to `stdout` using Python's `print` statement.
 
@@ -78,8 +81,7 @@ def my_logging_function(msg):
 server = ECMWFDataServer(log=my_logging_function)
 ```
 
-License
-=======
+# License
 
 Copyright 2019 European Centre for Medium-Range Weather Forecasts (ECMWF)
 Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License. You may obtain a copy of the License at
