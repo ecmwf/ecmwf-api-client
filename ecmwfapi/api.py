@@ -66,7 +66,7 @@ def get_apikey_values_from_environ():
     )
 
     if not any(apikey_values):
-        raise APIKeyNotFoundError()
+        raise APIKeyNotFoundError("ERROR: No API key found in the environment")
     elif not all(apikey_values):
         raise APIKeyFetchError("ERROR: Incomplete API key found in the environment")
     else:
