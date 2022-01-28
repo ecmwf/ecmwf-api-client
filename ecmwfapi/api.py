@@ -104,9 +104,9 @@ def get_apikey_values_from_rcfile(rcfile_path):
 
 
 def get_apikey_values():
-    """Get the API key either directly from the environment, or from a file.
-
-    If no API key is found, fall back to anonymous access.
+    """Get the API key values in Python tuple format either directly from the
+    environment, or from a file.  If no API key is found, fall back to anonymous
+    access.
 
     The complete workflow is the following:
 
@@ -118,6 +118,7 @@ def get_apikey_values():
             raise APIKeyFetchError.
         * If none found, or found but empty, assume no API key available in the
             environment, and continue to the next step.
+
     - Step 2: the environment is checked for variable ECMWF_API_RC_FILE, meant
         to point to a user defined API key file.
         * If found, but pointing to a file not found, raise APIKeyNotFoundError.
@@ -127,9 +128,11 @@ def get_apikey_values():
             a valid API key, return the API key in Python tuple format.
         * If not found, or empty, assume no user provided API key file and
             continue to the next step.
+
     - Step 3: try the default ~/.ecmwfapirc file.
         * Same as step 2, except for when ~/.ecmwfapirc is not found, where we
             continue to the next step.
+
     - Step 4: No API key found, so fall back to anonymous access.
 
     Returns:
