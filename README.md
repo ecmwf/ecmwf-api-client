@@ -20,18 +20,18 @@ However, anonymous access is only available for a limited set of datasets, and c
 * Login at https://apps.ecmwf.int/auth/login/
 * Retrieve you API access key at https://api.ecmwf.int/v1/key/
 
-Note that the API key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
+   Note that the key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
 
 * Copy the information in this page and paste it in the file $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows: usually in C:\\Users\\\<USERNAME\>\\.ecmwfapirc ; see how to create a file with a leading dot).
 
-Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows) should look something like this:
-```
-{
-    "url"   : "https://api.ecmwf.int/v1",
-    "key"   : "XXXXXXXXXXXXXXXXXXXXXX",
-    "email" : "john.smith@example.com"
-}
-```
+   Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows) should look something like this:
+   ```
+   {
+       "url"   : "https://api.ecmwf.int/v1",
+       "key"   : "XXXXXXXXXXXXXXXXXXXXXX",
+       "email" : "john.smith@example.com"
+   }
+   ```
 * You can browse the ECMWF data catalogue at https://apps.ecmwf.int/mars-catalogue/
 
 # Example
