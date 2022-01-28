@@ -17,9 +17,9 @@ Configure
 
 Note that the key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
 
-* Copy the information in this page and paste it in the file $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\.ecmwfapirc (Windows: usually in C:\Users\<USERNAME>\.ecmwfapirc ; see how to create a file with a leading dot).
+* Copy the information in this page and paste it in the file $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows: usually in C:\\Users\\\<USERNAME\>\\.ecmwfapirc ; see how to create a file with a leading dot).
 
-Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\.ecmwfapirc (Windows) should look something like this:
+Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows) should look something like this:
 ```
 {
     "url"   : "https://api.ecmwf.int/v1",
