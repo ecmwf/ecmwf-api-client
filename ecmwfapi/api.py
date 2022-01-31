@@ -47,66 +47,113 @@ except ImportError:
 VERSION = "1.6.2"
 
 
+DEFAULT_RCFILE_PATH = "~/.ecmwfapirc"
+ANONYMOUS_APIKEY_VALUES = (
+    "anonymous",
+    "https://api.ecmwf.int/v1",
+    "anonymous@ecmwf.int",
+)
+
+
+class APIKeyNotFoundError(Exception):
+    pass
+
+
 class APIKeyFetchError(Exception):
     pass
 
 
-def _get_apikey_from_environ():
-    try:
-        key = os.environ["ECMWF_API_KEY"]
-        url = os.environ["ECMWF_API_URL"]
-        email = os.environ["ECMWF_API_EMAIL"]
-        return key, url, email
-    except KeyError:
-        raise APIKeyFetchError("ERROR: Could not get the API key from the environment")
+def get_apikey_values_from_environ():
+    apikey_values = (
+        os.getenv("ECMWF_API_KEY"),
+        os.getenv("ECMWF_API_URL"),
+        os.getenv("ECMWF_API_EMAIL"),
+    )
 
-
-def _get_apikey_from_rcfile():
-    if "ECMWF_API_RC_FILE" in os.environ:
-        rc = os.path.normpath(os.path.expanduser(os.environ["ECMWF_API_RC_FILE"]))
+    if not any(apikey_values):
+        raise APIKeyNotFoundError("ERROR: No API key found in the environment")
+    elif not all(apikey_values):
+        raise APIKeyFetchError("ERROR: Incomplete API key found in the environment")
     else:
-        rc = os.path.normpath(os.path.expanduser("~/.ecmwfapirc"))
+        return apikey_values
+
+
+def get_apikey_values_from_rcfile(rcfile_path):
+    rcfile_path = os.path.normpath(os.path.expanduser(rcfile_path))
 
     try:
-        with open(rc) as f:
-            config = json.load(f)
+        with open(rcfile_path) as f:
+            apikey = json.load(f)
+    except FileNotFoundError as e:
+        raise APIKeyNotFoundError(str(e))
     except IOError as e:  # Failed reading from file
         raise APIKeyFetchError(str(e))
     except ValueError:  # JSON decoding failed
-        raise APIKeyFetchError("ERROR: Missing or malformed API key in '%s'" % rc)
+        raise APIKeyFetchError(
+            "ERROR: Missing or malformed API key in '%s'" % rcfile_path
+        )
     except Exception as e:  # Unexpected error
         raise APIKeyFetchError(str(e))
-
-    try:
-        key = config["key"]
-        url = config["url"]
-        email = config["email"]
-        return key, url, email
-    except:
-        raise APIKeyFetchError("ERROR: Missing or malformed API key in '%s'" % rc)
+    else:
+        try:
+            return (apikey["key"], apikey["url"], apikey["email"])
+        except:
+            raise APIKeyFetchError(
+                "ERROR: Missing or malformed API key in '%s'" % rcfile_path
+            )
 
 
 def get_apikey_values():
-    """Get the API key from either the environment or the '.ecmwfapirc' file,
-    in this order. If the API key is not available or invalid, use the API key
-    for anonymous access as a fallback.
+    """Get the API key values in Python tuple format either directly from the
+    environment, or from a file. If no API key is found, fall back to anonymous
+    access.
+
+    The complete workflow is the following:
+
+    - Step 1: the environment is checked for variables ECMWF_API_KEY,
+        ECMWF_API_URL, ECMWF_API_EMAIL.
+        * If all found, and not empty, return their values in Python tuple
+            format. 
+        * If only some found, and not empty, assume an incomplete API key, and
+            raise APIKeyFetchError.
+        * If none found, or found but empty, assume no API key available in the
+            environment, and continue to the next step.
+
+    - Step 2: the environment is checked for variable ECMWF_API_RC_FILE, meant
+        to point to a user defined API key file.
+        * If found, but pointing to a file not found, raise APIKeyNotFoundError.
+        * If found, and the file it points to exists, but cannot not be read, or
+            contains an invalid API key, raise APIKeyFetchError.
+        * If found, and the file it points to exists, can be read, and contains
+            a valid API key, return the API key in Python tuple format.
+        * If not found, or empty, assume no user provided API key file and
+            continue to the next step.
+
+    - Step 3: try the default ~/.ecmwfapirc file.
+        * Same as step 2, except for when ~/.ecmwfapirc is not found, where we
+            continue to the next step.
+
+    - Step 4: No API key found, so fall back to anonymous access.
 
     Returns:
-        Tuple with the API key token, url, and email.
+        Pyhon tuple with the API key token, url, and email.
+
+    Raises:
+        APIKeyFetchError: If an API key is found, but invalid.
+        APIKeyNotFound: When ECMWF_API_RC_FILE is defined, but pointing to a
+            file that does not exist.
     """
     try:
-        key_values = _get_apikey_from_environ()
-    except APIKeyFetchError:
-        try:
-            key_values = _get_apikey_from_rcfile()
-        except APIKeyFetchError:
-            return (
-                os.environ.get("ECMWF_API_KEY", "anonymous"),
-                os.environ.get("ECMWF_API_URL", "https://api.ecmwf.int/v1"),
-                os.environ.get("ECMWF_API_EMAIL", "anonymous@ecmwf.int"),
-            )
-
-    return key_values
+        return get_apikey_values_from_environ()
+    except APIKeyNotFoundError:
+        env_rcfile_path = os.getenv("ECMWF_API_RC_FILE")
+        if env_rcfile_path:
+            return get_apikey_values_from_rcfile(env_rcfile_path)
+        else:
+            try:
+                return get_apikey_values_from_rcfile(DEFAULT_RCFILE_PATH)
+            except APIKeyNotFoundError:
+                return ANONYMOUS_APIKEY_VALUES
 
 
 class RetryError(Exception):
@@ -399,7 +446,7 @@ class APIRequest(object):
 
         user = self.connection.call("%s/%s" % (self.url, "who-am-i"))
 
-        if os.environ.get("GITHUB_ACTION") is None:
+        if os.getenv("GITHUB_ACTION") is None:
             self.log("Welcome %s" % (user["full_name"] or "user '%s'" % user["uid"],))
 
         general_info = self.connection.call("%s/%s" % (self.url, "info")).get("info")
