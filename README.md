@@ -16,8 +16,7 @@ However, anonymous access is only available for a limited set of datasets, and c
 
 ## Registered access (recommended)
 
-* Register with ECMWF at https://apps.ecmwf.int/registration/.
-* Login at https://apps.ecmwf.int/auth/login/.
+* Register with ECMWF at https://www.ecmwf.int.
 * Retrieve you API access key at https://api.ecmwf.int/v1/key/.
 
    Note that the API access key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key, log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
