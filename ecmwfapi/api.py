@@ -44,7 +44,7 @@ except ImportError:
     sys.exit("Python socket module was not compiled with SSL support. Aborting...")
 
 
-VERSION = "1.6.3"
+VERSION = "1.6.4"
 
 
 DEFAULT_RCFILE_PATH = "~/.ecmwfapirc"
