@@ -45,7 +45,7 @@ jobs:
 
       - name: Tests
         run: |
-          python setup.py develop
+          pip install -e .
           pip install pytest
           pytest
 
