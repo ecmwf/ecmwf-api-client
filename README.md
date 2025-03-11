@@ -63,6 +63,30 @@ server.retrieve({
 })
 ```
 
+## List MARS Contents
+
+It is also possible to [list MARS contents](https://confluence.ecmwf.int/display/UDOC/List). In this case
+provide the request as a string, for example:
+
+```python
+from ecmwfapi import ECMWFService
+
+request = """LIST,
+CLASS   = EA,
+TYPE    = AN,
+STREAM  = OPER,
+EXPVER  = 0005,
+LEVTYPE = SFC,
+PARAM   = 031,
+TIME    = 0000,
+GRID    = 0.25/0.25,
+DATE    = 20250302
+"""
+
+mars = ECMWFService("mars")
+mars.execute(request, "mylist.txt")
+```
+
 # Logging
 
 Logging messages by default are emitted to `stdout` using Python's `print` statement.
