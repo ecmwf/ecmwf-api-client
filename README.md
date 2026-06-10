@@ -1,75 +1,83 @@
 # ecmwf-api-client
 
-# Installation
+Python client for the [ECMWF Web API](https://confluence.ecmwf.int/display/WEBAPI). Two entry points:
 
-Install via pip with:
+- **`ECMWFDataServer`** — retrieve IFS research experiments.
+- **`ECMWFService`** — access [MARS](https://confluence.ecmwf.int/display/WEBAPI/Access+MARS), ECMWF's Meteorological Archival and Retrieval System, for authorized users.
 
-> $ pip install ecmwf-api-client
+## What this client is for
 
-# Configure
+- **IFS research experiments** — available anonymously, or with registered access for a better quality of service.
+- **MARS archive access** — for authorized users; see [Access MARS](https://confluence.ecmwf.int/display/WEBAPI/Access+MARS) for who can access it and how.
 
-## Anonymous access (default, not recommended)
+## Looking for public datasets?
 
-Anonymous access is the default type of access, with no configuration needed.
+The **ECMWF Public Datasets Service** (TIGGE, S2S, ERA-Interim, and others) has been decommissioned. See the [decommissioning notice](https://confluence.ecmwf.int/display/DAC/Decommissioning+of+ECMWF+Public+Datasets+Service) for where each dataset moved — in short: TIGGE and S2S to the [ECMWF Data Store (ECDS)](https://ecds.ecmwf.int/), reanalyses to the [Climate Data Store (CDS)](https://cds.climate.copernicus.eu/), and real-time open forecast data is available via [ecmwf-opendata](https://github.com/ecmwf/ecmwf-opendata).
 
-However, anonymous access is only available for a limited set of datasets, and comes with a much lower quality of service. For access to all the available datasets, and an improved quality of service, please use registered access (see below).
+## Installation
 
-## Registered access (recommended)
-
-* Register with ECMWF at https://www.ecmwf.int.
-* Retrieve you API access key at https://api.ecmwf.int/v1/key/.
-
-   Note that the API access key expires in 1 year. You will receive an email to the registered email address 1 month before the expiration date with the renewal instructions. To check the expiry date of your current key, log into www.ecmwf.int, and go to https://api.ecmwf.int/v1/key/.
-
-* Copy and paste the API access key into the file $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows: usually in C:\\Users\\\<USERNAME\>\\.ecmwfapirc).
-
-   Your $HOME/.ecmwfapirc (Unix/Linux) or %USERPROFILE%\\.ecmwfapirc (Windows) should look something like this:
-   ```
-   {
-       "url"   : "https://api.ecmwf.int/v1",
-       "key"   : "XXXXXXXXXXXXXXXXXXXXXX",
-       "email" : "john.smith@example.com"
-   }
-   ```
-* Alternatively, one can use a file of their own liking, and point to it using environment variable `ECMWF_API_RC_FILE`. `ECMWF_API_RC_FILE` should be set to the full path of the given file. This method takes priority of the previous method of using a .ecmwfapirc file.
-* As yet another option, one can set the API access key values directly in the environment using variables `ECMWF_API_KEY` (key), `ECMWF_API_URL` (url), `ECMWF_API_EMAIL` (email). This method takes priority over the previous method of using environment variable `ECMWF_API_RC_FILE`.
-   
-# Example
-
-You can test this small python script to retrieve TIGGE (https://apps.ecmwf.int/datasets/data/tigge) data. Note that access to TIGGE data requires registered access, and is subject to accepting a licence at https://apps.ecmwf.int/datasets/data/tigge/licence/.
 ```
-#!/usr/bin/env python
-from ecmwfapi import ECMWFDataServer
+$ pip install ecmwf-api-client
+```
 
-# To run this example, you need an API key
-# available from https://api.ecmwf.int/v1/key/
+or with conda:
+
+```
+$ conda install -c conda-forge ecmwf-api-client
+```
+
+## Configure
+
+### Anonymous access (default)
+
+No configuration needed. Anonymous access works only for the IFS research experiments, with a lower quality of service. For everything else, and for a better quality of service, use registered access.
+
+### Registered access (recommended)
+
+- Register with ECMWF at https://www.ecmwf.int.
+- Retrieve your API key at https://api.ecmwf.int/v1/key/ (see [Install ECMWF API Key](https://confluence.ecmwf.int/display/WEBAPI/Install+ECMWF+API+Key) for details, including key expiry and renewal).
+- Save the key to `$HOME/.ecmwfapirc` (Unix/Linux/macOS) or `C:\Users\<USERNAME>\.ecmwfapirc` (Windows):
+
+  ```
+  {
+      "url"   : "https://api.ecmwf.int/v1",
+      "key"   : "XXXXXXXXXXXXXXXXXXXXXX",
+      "email" : "john.smith@example.com"
+  }
+  ```
+
+- Alternatively, point the environment variable `ECMWF_API_RC_FILE` to a file of your choice (takes priority over `.ecmwfapirc`).
+- Or set `ECMWF_API_KEY`, `ECMWF_API_URL`, `ECMWF_API_EMAIL` directly in the environment (takes priority over `ECMWF_API_RC_FILE`).
+- Or pass the values directly in code: `ECMWFDataServer(url=..., key=..., email=...)` or `ECMWFService("mars", url=..., key=..., email=...)`.
+
+## Retrieving IFS research experiments
+
+Use `ECMWFDataServer`:
+
+```python
+from ecmwfapi import ECMWFDataServer
 
 server = ECMWFDataServer()
 server.retrieve({
-    'origin'    : "ecmf",
-    'levtype'   : "sfc",
-    'number'    : "1",
-    'expver'    : "prod",
-    'dataset'   : "tigge",
-    'step'      : "0/6/12/18",
-    'area'      : "70/-130/30/-60",
-    'grid'      : "2/2",
-    'param'     : "167",
-    'time'      : "00/12",
-    'date'      : "2014-11-01",
-    'type'      : "pf",
-    'class'     : "ti",
-    'target'    : "tigge_2014-11-01_0012.grib"
+    # ... request parameters ...
 })
 ```
 
-# Logging
+Don't write the request by hand. Open the experiment's page (for example https://apps.ecmwf.int/ifs-experiments/rd/gkzp/), select what you need, and the site generates the exact request to paste into `retrieve({...})`.
 
-Logging messages by default are emitted to `stdout` using Python's `print` statement.
+## Accessing MARS
 
-To change that behaviour, one can define their own logging function and use it like so:
+For MARS access, follow [Access MARS](https://confluence.ecmwf.int/display/WEBAPI/Access+MARS). The recommended way is the `mars` command wrapper script provided there, which runs MARS requests from a file. The wrapper is built on this package's `ECMWFService` class.
 
-```
+## Retrieving efficiently
+
+Both IFS experiments and the MARS archive are stored on tape, so retrievals can be slow and large. Before submitting big requests, read [Retrieval efficiency](https://confluence.ecmwf.int/display/WEBAPI/Retrieval+efficiency) — it explains how to check the cost of a request first, how to structure requests around tapes, and the request limits. The [Web API FAQ](https://confluence.ecmwf.int/display/WEBAPI/Web+API+FAQ) covers monitoring requests and common errors.
+
+## Logging
+
+By default, log messages are printed to `stdout`. To use your own logging:
+
+```python
 import logging
 from ecmwfapi import ECMWFDataServer
 
@@ -81,7 +89,7 @@ def my_logging_function(msg):
 server = ECMWFDataServer(log=my_logging_function)
 ```
 
-# License
+## License
 
 Copyright 2019 European Centre for Medium-Range Weather Forecasts (ECMWF)
 Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License. You may obtain a copy of the License at
