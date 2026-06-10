@@ -1,5 +1,10 @@
 # ecmwf-api-client
 
+[![PyPI version](https://img.shields.io/pypi/v/ecmwf-api-client.svg)](https://pypi.org/project/ecmwf-api-client/)
+[![Python versions](https://img.shields.io/pypi/pyversions/ecmwf-api-client.svg)](https://pypi.org/project/ecmwf-api-client/)
+[![Build](https://github.com/ecmwf/ecmwf-api-client/actions/workflows/check-and-publish.yml/badge.svg?branch=master)](https://github.com/ecmwf/ecmwf-api-client/actions/workflows/check-and-publish.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+
 Python client for the [ECMWF Web API](https://confluence.ecmwf.int/display/WEBAPI). Two entry points:
 
 - **`ECMWFDataServer`** — retrieve IFS research experiments.
