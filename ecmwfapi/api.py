@@ -7,9 +7,6 @@
 # granted to it by virtue of its status as an intergovernmental organisation nor
 # does it submit to any jurisdiction.
 
-# make the python3-like print behave in python 2
-from __future__ import print_function
-
 import json
 import os
 import sys
@@ -17,31 +14,16 @@ import time
 import traceback
 import textwrap
 from contextlib import closing
-
-# python 2 and 3 compatible urllib and httplib imports
-try:
-    from urllib.parse import urlparse
-    from urllib.parse import urljoin
-    from urllib.error import HTTPError, URLError
-    from urllib.request import (
-        HTTPRedirectHandler,
-        Request,
-        build_opener,
-        urlopen,
-        addinfourl,
-    )
-    from http.client import BadStatusLine
-except ImportError:
-    from urlparse import urlparse
-    from urlparse import urljoin
-    from urllib2 import HTTPError, URLError
-    from urllib2 import HTTPRedirectHandler, Request, build_opener, urlopen, addinfourl
-    from httplib import BadStatusLine
-
-try:
-    import ssl
-except ImportError:
-    sys.exit("Python socket module was not compiled with SSL support. Aborting...")
+from http.client import BadStatusLine
+from urllib.error import HTTPError, URLError
+from urllib.parse import urljoin, urlparse
+from urllib.request import (
+    HTTPRedirectHandler,
+    Request,
+    addinfourl,
+    build_opener,
+    urlopen,
+)
 
 
 VERSION = "1.6.5"
@@ -234,25 +216,11 @@ class Ignore303(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         if code in [301, 302]:
             # We want the posts to work even if we are redirected
-            try:
-                # Python < 3.4
-                data = req.get_data()
-            except AttributeError:
-                # Python >= 3.4
-                data = req.data
-
-            try:
-                # Python < 3.4
-                origin_req_host = req.get_origin_req_host()
-            except AttributeError:
-                # Python >= 3.4
-                origin_req_host = req.origin_req_host
-
             return Request(
                 newurl,
-                data=data,
+                data=req.data,
                 headers=req.headers,
-                origin_req_host=origin_req_host,
+                origin_req_host=req.origin_req_host,
                 unverifiable=True,
             )
         return None
@@ -270,7 +238,7 @@ def print_with_timestamp(msg):
     print("%s %s" % (t, msg))
 
 
-class Connection(object):
+class Connection:
     def __init__(
         self, url, email=None, key=None, verbose=False, quiet=False, log=no_log
     ):
@@ -419,7 +387,7 @@ class Connection(object):
             pass
 
 
-class APIRequest(object):
+class APIRequest:
     def __init__(
         self,
         url,
@@ -580,7 +548,7 @@ class APIRequest(object):
             self.log("")
 
 
-class ECMWFDataServer(object):
+class ECMWFDataServer:
     def __init__(
         self, url=None, key=None, email=None, verbose=False, log=print_with_timestamp
     ):
@@ -607,7 +575,7 @@ class ECMWFDataServer(object):
         c.execute(req, target)
 
 
-class ECMWFService(object):
+class ECMWFService:
     def __init__(
         self,
         service,
