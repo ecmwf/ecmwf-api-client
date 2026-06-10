@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecmwf-api-client"
+description = "Python client for ECMWF web services API."
+readme = "README.md"
+license = { text = "Apache License Version 2.0" }
+authors = [
+    { name = "European Centre for Medium-Range Weather Forecasts (ECMWF)", email = "software.support@ecmwf.int" },
+]
+requires-python = ">=3.8"
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/ecmwf/ecmwf-api-client"
+
+[tool.setuptools.dynamic]
+version = { attr = "ecmwfapi.api.VERSION" }
+
+[tool.setuptools.packages.find]
+include = ["ecmwfapi*"]
