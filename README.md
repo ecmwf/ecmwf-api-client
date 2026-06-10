@@ -71,7 +71,7 @@ For MARS access, follow [Access MARS](https://confluence.ecmwf.int/display/WEBAP
 
 ## Retrieving efficiently
 
-Both IFS experiments and the MARS archive are stored on tape, so retrievals can be slow and large. Before submitting big requests, read [Retrieval efficiency](https://confluence.ecmwf.int/display/WEBAPI/Retrieval+efficiency) — it explains how to check the cost of a request first, how to structure requests around tapes, and the request limits. The [Web API FAQ](https://confluence.ecmwf.int/display/WEBAPI/Web+API+FAQ) covers monitoring requests and common errors.
+IFS experiments are served from the MARS archive, which is primarily a tape library, so retrievals can be slow and large. Before submitting big requests, read [Retrieval efficiency](https://confluence.ecmwf.int/display/WEBAPI/Retrieval+efficiency) — it explains how to check the cost of a request first, how to structure requests around tapes, and the request limits. The [Web API FAQ](https://confluence.ecmwf.int/display/WEBAPI/Web+API+FAQ) covers monitoring requests and common errors.
 
 ## Logging
 
