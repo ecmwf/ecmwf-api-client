@@ -26,7 +26,7 @@ from urllib.request import (
 )
 
 
-VERSION = "1.6.5"
+VERSION = "1.7.0"
 
 
 DEFAULT_RCFILE_PATH = "~/.ecmwfapirc"
